@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="shortcut icon" href="./assets/logo.png" type="image/x-icon">
+    <title>Weatherly — Clean Weather App</title>
+
+    <!-- sweetalert2 link -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body
+    class="bg-background font-body-md text-on-surface antialiased selection:bg-surface-container-high selection:text-primary min-h-screen flex flex-col justify-between">
+
+    <header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-surface-container">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <!-- Branded Logo -->
+            <a class="flex items-center gap-2.5 group" href="#">
+                <div
+                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center p-1 overflow-hidden transition-transform group-hover:scale-105">
+                    <img alt="Weatherly Logo" class="w-full h-full object-contain" src="./assets/logo.png" />
+                </div>
+                <span
+                    class="font-headline-sm text-headline-sm tracking-tight text-on-surface group-hover:text-primary transition-colors">Weatherly</span>
+            </a>
+            <!-- Quick Location & Unit Toggle Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-primary text-[18px]">my_location</span>
+                    <span class="hidden sm:inline">Use My Location</span>
+                </button>
+                <!-- Temperature Unit Toggle -->
+                <div class="inline-flex items-center rounded-lg bg-surface-container-low p-1 shadow-sm">
+                    <button
+                        class="px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-label-caps text-label-caps font-bold shadow-sm transition-all">°C</button>
+                    <button
+                        class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps font-bold transition-all">°F</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="w-full flex-1">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6">
+            
+            <section class="w-full flex flex-col gap-2">
+                <div
+                    class="relative w-full bg-surface-container-lowest border border-surface-container rounded-xl shadow-sm p-1.5 flex flex-col sm:flex-row items-center gap-2">
+                    <div class="relative flex-1 flex items-center w-full px-3">
+                        <span class="material-symbols-outlined text-outline text-[20px] select-none">search</span>
+                        <input
+                            class="w-full bg-transparent border-0 outline-none px-3 py-2 text-body-lg font-body-lg text-on-surface placeholder:text-outline focus:ring-0"
+                            id="city-search-input" placeholder="Search a city name or country name" type="text" />
+                        <button id="close-cty"
+                            class="p-1 rounded-md text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer">
+                            <span class="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                    </div>
+                    <button id="search-btn"
+                        class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all active:scale-[0.98] cursor-pointer ">
+                        <span>Search</span>
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-6 w-full" id="state-success">
+                    <!-- Current Weather Hero Card -->
+                    <div
+                        class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+                        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                            <!-- Left: Location & Formatted Date/Time -->
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
+                                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                                        <span id="hero-city-name">Dhaka</span>, <span
+                                            class="text-on-surface-variant font-normal"
+                                            id="hero-country-name">Bangladesh</span>
+                                    </h1>
+                                </div>
+                                <p
+                                    class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1.5 pl-0.5">
+                                    <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                    <span id="hero-local-time">Tuesday, Oct 24 • 2:30 PM</span>
+                                </p>
+                                <!-- Feels Like & High / Low range tags -->
+                                <div class="flex flex-wrap items-center gap-2.5 pt-2">
+                                    <div
+                                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm">
+                                        <span
+                                            class="material-symbols-outlined text-primary text-[16px]">thermostat</span>
+                                        <span>Feels like <strong class="font-semibold text-on-surface"
+                                                id="feels-like-val">32°C</strong></span>
+                                    </div>
+                                    <div
+                                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm">
+                                        <span
+                                            class="material-symbols-outlined text-secondary text-[16px]">device_thermostat</span>
+                                        <span id="range-val">H: 33°C • L: 24°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Right: Big Temperature Display & Condition Icon -->
+                            <div class="flex items-center gap-4 sm:gap-6 self-start sm:self-auto">
+                                <div
+                                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface-container-low flex items-center justify-center p-2.5 text-primary">
+                                    <span class="material-symbols-outlined text-[44px] sm:text-[54px] text-primary"
+                                        id="hero-weather-icon">partly_cloudy_day</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-start">
+                                        <span
+                                            class="font-display-hero text-display-hero text-on-surface tracking-tighter"
+                                            id="hero-temp-display">29</span>
+                                        <span class="font-headline-lg text-headline-lg text-primary ml-1"
+                                            id="hero-temp-unit">°C</span>
+                                    </div>
+                                    <span class="font-headline-sm text-headline-sm text-on-surface font-medium"
+                                        id="hero-condition-text">Partly Cloudy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 6 Core Weather Metrics Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- 1. Humidity -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span
+                                    class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">Humidity</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">water_drop</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-humidity">78</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant">%</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-primary h-full rounded-full" id="bar-humidity" style="width: 78%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Dew point 25°</span>
+                        </div>
+                        <!-- 2. Wind Speed -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span
+                                    class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">Wind
+                                    Speed</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">air</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-wind">12</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant"
+                                        id="metric-wind-unit">km/h</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-primary h-full rounded-full" style="width: 25%;"></div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Direction: ESE (115°)</span>
+                        </div>
+                        <!-- 3. Precipitation Chance -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span
+                                    class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">Precipitation</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">rainy</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-rain">20</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant">%</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-secondary-container h-full rounded-full" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">0.2 mm expected</span>
+                        </div>
+                        <!-- 4. Barometric Pressure -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span
+                                    class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">Pressure</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">compress</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-pressure">1008</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant">hPa</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-primary h-full rounded-full" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Normal atmospheric
+                                level</span>
+                        </div>
+                        <!-- 5. Visibility -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span
+                                    class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">Visibility</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">visibility</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-visibility">8.0</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant"
+                                        id="metric-vis-unit">km</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-primary h-full rounded-full" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Clear horizontal view</span>
+                        </div>
+                        <!-- 6. UV Index -->
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between gap-3">
+                            <div class="flex items-center justify-between text-on-surface-variant">
+                                <span class="font-label-caps text-label-caps uppercase tracking-wider font-semibold">UV
+                                    Index</span>
+                                <span class="material-symbols-outlined text-primary text-[20px]">wb_sunny</span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="font-metric-xl text-metric-xl text-on-surface font-semibold"
+                                        id="metric-uv">6</span>
+                                    <span class="font-body-lg text-body-lg text-on-surface-variant">of 11</span>
+                                </div>
+                                <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-tertiary-container h-full rounded-full" style="width: 55%;"></div>
+                                </div>
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Moderate (Sunscreen
+                                advised)</span>
+                        </div>
+                    </div>
+                    <!-- 5-Day Extended Forecast Deck -->
+                    <div
+                        class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-[22px]">calendar_today</span>
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">5-Day
+                                    Forecast
+                                </h2>
+                            </div>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Daily Outlook</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-1"
+                            id="forecast-deck-container">
+                            <!-- Day 1 (Wed) -->
+                            <div
+                                class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
+                                <div>
+                                    <span class="font-label-caps text-label-caps uppercase text-primary font-bold">Oct
+                                        25</span>
+                                    <p class="font-label-md text-label-md text-on-surface font-semibold">Wed</p>
+                                </div>
+                                <span class="material-symbols-outlined text-secondary text-[32px]">rainy</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Rain</span>
+                                <div class="flex items-center gap-1.5 text-body-sm">
+                                    <span class="font-bold text-on-surface" data-forecast-high="31">31°</span>
+                                    <span class="text-on-surface-variant" data-forecast-low="23">23°</span>
+                                </div>
+                            </div>
+                            <!-- Day 2 (Thu) -->
+                            <div
+                                class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
+                                <div>
+                                    <span
+                                        class="font-label-caps text-label-caps uppercase text-on-surface-variant font-bold">Oct
+                                        26</span>
+                                    <p class="font-label-md text-label-md text-on-surface font-semibold">Thu</p>
+                                </div>
+                                <span class="material-symbols-outlined text-tertiary text-[32px]">thunderstorm</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Thunderstorm</span>
+                                <div class="flex items-center gap-1.5 text-body-sm">
+                                    <span class="font-bold text-on-surface" data-forecast-high="30">30°</span>
+                                    <span class="text-on-surface-variant" data-forecast-low="22">22°</span>
+                                </div>
+                            </div>
+                            <!-- Day 3 (Fri) -->
+                            <div
+                                class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
+                                <div>
+                                    <span
+                                        class="font-label-caps text-label-caps uppercase text-on-surface-variant font-bold">Oct
+                                        27</span>
+                                    <p class="font-label-md text-label-md text-on-surface font-semibold">Fri</p>
+                                </div>
+                                <span class="material-symbols-outlined text-primary text-[32px]">sunny</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Sunny</span>
+                                <div class="flex items-center gap-1.5 text-body-sm">
+                                    <span class="font-bold text-on-surface" data-forecast-high="32">32°</span>
+                                    <span class="text-on-surface-variant" data-forecast-low="23">23°</span>
+                                </div>
+                            </div>
+                            <!-- Day 4 (Sat) -->
+                            <div
+                                class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
+                                <div>
+                                    <span
+                                        class="font-label-caps text-label-caps uppercase text-on-surface-variant font-bold">Oct
+                                        28</span>
+                                    <p class="font-label-md text-label-md text-on-surface font-semibold">Sat</p>
+                                </div>
+                                <span class="material-symbols-outlined text-primary text-[32px]">sunny</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Sunny</span>
+                                <div class="flex items-center gap-1.5 text-body-sm">
+                                    <span class="font-bold text-on-surface" data-forecast-high="34">34°</span>
+                                    <span class="text-on-surface-variant" data-forecast-low="24">24°</span>
+                                </div>
+                            </div>
+                            <!-- Day 5 (Sun) -->
+                            <div
+                                class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3 col-span-2 sm:col-span-1">
+                                <div>
+                                    <span
+                                        class="font-label-caps text-label-caps uppercase text-on-surface-variant font-bold">Oct
+                                        29</span>
+                                    <p class="font-label-md text-label-md text-on-surface font-semibold">Sun</p>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined text-primary text-[32px]">partly_cloudy_day</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Partly Cloudy</span>
+                                <div class="flex items-center gap-1.5 text-body-sm">
+                                    <span class="font-bold text-on-surface" data-forecast-high="33">33°</span>
+                                    <span class="text-on-surface-variant" data-forecast-low="25">25°</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ========================================================================= -->
+                <!-- STATE 2: INITIAL / EMPTY SCREEN                                           -->
+                <!-- ========================================================================= -->
+                <div class="hidden flex-col items-center justify-center py-16 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+                    id="state-initial">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
+                        <span class="material-symbols-outlined text-[40px]">travel_explore</span>
+                    </div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface max-w-md mb-2">Search for a City</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-6">
+                        Find real-time weather conditions and a 5-day forecast for any city around the world.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-2.5">
+                        <button
+                            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all">Try
+                            "Dhaka"</button>
+                        <button
+                            class="px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all">Try
+                            "London"</button>
+                        <button
+                            class="px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all">Use
+                            My Location</button>
+                    </div>
+                </div>
+                <!-- ========================================================================= -->
+                <!-- STATE 3: LOADING SKELETON STATE                                           -->
+                <!-- ========================================================================= -->
+                <div class="hidden flex-col gap-6 w-full animate-pulse" id="state-loading">
+                    <!-- Hero Skeleton -->
+                    <div
+                        class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between gap-6">
+                        <div class="flex flex-col gap-3 w-full max-w-xs">
+                            <div class="h-8 w-44 bg-surface-container rounded-lg"></div>
+                            <div class="h-4 w-36 bg-surface-container rounded"></div>
+                            <div class="flex gap-2 pt-2">
+                                <div class="h-7 w-28 bg-surface-container rounded-lg"></div>
+                                <div class="h-7 w-28 bg-surface-container rounded-lg"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 bg-surface-container rounded-2xl"></div>
+                            <div class="flex flex-col gap-2">
+                                <div class="h-12 w-24 bg-surface-container rounded-lg"></div>
+                                <div class="h-5 w-20 bg-surface-container rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Metrics Skeleton Grid (6 cards) -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest border border-surface-container rounded-xl p-5 shadow-sm h-32 flex flex-col justify-between">
+                            <div class="h-4 w-20 bg-surface-container rounded"></div>
+                            <div class="h-8 w-16 bg-surface-container rounded"></div>
+                            <div class="h-2 w-full bg-surface-container rounded-full"></div>
+                        </div>
+                    </div>
+                    <!-- 5-Day Forecast Skeleton -->
+                    <div
+                        class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                        <div class="h-6 w-36 bg-surface-container rounded"></div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                            <div class="h-32 bg-surface-container rounded-xl"></div>
+                            <div class="h-32 bg-surface-container rounded-xl"></div>
+                            <div class="h-32 bg-surface-container rounded-xl"></div>
+                            <div class="h-32 bg-surface-container rounded-xl"></div>
+                            <div class="h-32 bg-surface-container rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ========================================================================= -->
+                <!-- STATE 4: CITY NOT FOUND (404)                                             -->
+                <!-- ========================================================================= -->
+                <div class="hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+                    id="state-404">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
+                        <span class="material-symbols-outlined text-[38px]">location_off</span>
+                    </div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Location Not Found</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-6">
+                        We couldn’t find "<span class="font-semibold text-on-surface"
+                            id="not-found-query">Atlantis</span>".
+                        Please check your spelling and try again.
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all">Reset
+                            to Dhaka</button>
+                        <button
+                            class="px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all">Edit
+                            Search</button>
+                    </div>
+                </div>
+                <!-- ========================================================================= -->
+                <!-- STATE 5: NETWORK / API OFFLINE ERROR                                      -->
+                <!-- ========================================================================= -->
+                <div class="hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+                    id="state-offline">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-error-container text-on-error-container flex items-center justify-center mb-4 shadow-sm">
+                        <span class="material-symbols-outlined text-[38px]">cloud_off</span>
+                    </div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Network Error</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-6">
+                        Unable to connect to weather service. Please check your network connection and retry.
+                    </p>
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">refresh</span>
+                        <span>Retry Connection</span>
+                    </button>
+                </div>
+                <!-- ========================================================================= -->
+                <!-- STATE 6: EMPTY SEARCH VALIDATION ERROR                                    -->
+                <!-- ========================================================================= -->
+                <div class="hidden flex-col items-center justify-center py-12 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+                    id="state-validation">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-3">
+                        <span class="material-symbols-outlined text-[32px]">warning</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-1">Please enter a city name</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-xs mb-5">
+                        Type a city like "Dhaka", "London", or "Tokyo" to get current weather data.
+                    </p>
+                    <button
+                        class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all">
+                        Auto-fill "Dhaka" &amp; Search
+                    </button>
+                </div>
+        </div>
+    </main>
+    <!-- Clean, Lightweight Footer -->
+    <footer class="w-full bg-surface-container-low border-t border-surface-container mt-8">
+        <div
+            class="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-body-sm text-on-surface-variant">
+            <div>
+                <span class="font-semibold text-on-surface">Weatherly</span> — Built for vanilla JavaScript weather API
+                practice.
+            </div>
+            <div class="flex items-center gap-3">
+                <span>Powered by Open-Meteo</span>
+                <span>•</span>
+                <span>© <span id="current-year">2026</span> Weatherly</span>
+            </div>
+        </div>
+    </footer>
+    <!-- Vanilla JavaScript Logic -->
+    <script src="./script.js"></script>
+</body>
+
+</html>
