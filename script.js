@@ -1,12 +1,16 @@
-// fetch(
-//   "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m&timezone=Asia/Dhaka",
-// ).then((res) => res.json().then((data) => console.log(data)));
-
-// https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=10&language=en
-
 const searchInput = document.querySelector("#city-search-input");
 const searchBtn = document.querySelector("#search-btn");
 const closeCty = document.querySelector("#close-cty");
+const temps = document.querySelectorAll(".temp");
+
+temps.forEach(temp => {
+  temp.addEventListener("click", (e) => {
+    temps.forEach(item => {
+      item.classList.remove("bg-surface-container-lowest")
+    })
+    e.currentTarget.classList.add("bg-surface-container-lowest")
+  })
+})
 
 const getCoordinate = () => {
   let city = searchInput.value.trim().toLowerCase();
@@ -23,7 +27,7 @@ const getCoordinate = () => {
       draggable: true,
     });
   } else {
-    fetch("https://geocoding-api.open-meteo.com/v1/search?name=dhaka&count=1")
+    fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`)
       .then((res) => {
         if (!res.ok) {
           throw new Error();
@@ -31,17 +35,32 @@ const getCoordinate = () => {
         return res.json();
       })
       .then(({ results }) => {
-        if(!results){
-         return console.log("validation Error");
+        if (!results) {
+          return console.log("validation Error");
         }
-        console.log(results);
+        getWeatherData(results);
       })
-      .catch(() => console.log( "Network error"))
-      .finally(() => console.log("Finally off loading........."));
+      .catch(() => console.log("Network error"));
+    // .finally(() => console.log("Finally off loading........."));
 
     searchInput.value = "";
   }
 };
+
+const getWeatherData = (results) => {
+  const { latitude, longitude, timezone, name } = results[0];
+  fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=${timezone}`,
+  )
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error();
+      }
+      return res.json();
+    })
+    .then((data) => console.log(data));
+};
+
 searchBtn.addEventListener("click", getCoordinate);
 
 closeCty.addEventListener("click", () => {
@@ -50,6 +69,6 @@ closeCty.addEventListener("click", () => {
 
 searchInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    return getCoordinate();
+    getCoordinate();
   }
 });
