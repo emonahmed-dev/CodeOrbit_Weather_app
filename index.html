@@ -39,7 +39,8 @@
                     <span class="hidden sm:inline">Use My Location</span>
                 </button>
                 <!-- Temperature Unit Toggle -->
-                <div class="inline-flex items-center rounded-lg bg-surface-container-low p-1 shadow-sm">
+                <div class="inline-flex items-center rounded-lg bg-surface-container-low p-1 shadow-sm tempp">
+
                     <button
                         class="temp px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-label-caps text-label-caps font-bold shadow-sm transition-all cursor-pointer">°C</button>
                     <button
@@ -51,7 +52,7 @@
     <!-- Main Content Area -->
     <main class="w-full flex-1">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6">
-            
+
             <section class="w-full flex flex-col gap-2">
                 <div
                     class="relative w-full bg-surface-container-lowest border border-surface-container rounded-xl shadow-sm p-1.5 flex flex-col sm:flex-row items-center gap-2">
@@ -72,7 +73,9 @@
                     </button>
                 </div>
 
-                <div class="flex flex-col gap-6 w-full" id="state-success">
+                <!-- STATE 1: SUCCESS / AFTER DATA FETCHING -->
+                <div class="state flex flex-col gap-6 w-full" id="state-success"></div>
+                <template>
                     <!-- Current Weather Hero Card -->
                     <div
                         class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
@@ -151,7 +154,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <span class="text-body-sm font-body-sm text-on-surface-variant">Dew point 25°</span>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant " id="humidity-dew">Dew
+                                point 25°</span>
                         </div>
                         <!-- 2. Wind Speed -->
                         <div
@@ -170,10 +174,13 @@
                                         id="metric-wind-unit">km/h</span>
                                 </div>
                                 <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div class="bg-primary h-full rounded-full" style="width: 25%;"></div>
+                                    <div class="bg-primary h-full rounded-full" style="width: 25%;" id="bar-wind">
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-body-sm font-body-sm text-on-surface-variant">Direction: ESE (115°)</span>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant"
+                                id="wind-direction">Direction: ESE
+                                (115°)</span>
                         </div>
                         <!-- 3. Precipitation Chance -->
                         <div
@@ -190,10 +197,12 @@
                                     <span class="font-body-lg text-body-lg text-on-surface-variant">%</span>
                                 </div>
                                 <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div class="bg-secondary-container h-full rounded-full" style="width: 20%;"></div>
+                                    <div class="bg-secondary-container h-full rounded-full" style="width: 20%;"
+                                        id="bar-Precipitation">
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-body-sm font-body-sm text-on-surface-variant">0.2 mm expected</span>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant" id="Precipitation-expected">0.2 mm expected</span>
                         </div>
                         <!-- 4. Barometric Pressure -->
                         <div
@@ -210,7 +219,8 @@
                                     <span class="font-body-lg text-body-lg text-on-surface-variant">hPa</span>
                                 </div>
                                 <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div class="bg-primary h-full rounded-full" style="width: 60%;"></div>
+                                    <div class="bg-primary h-full rounded-full" style="width: 60%;" id="bar-pressure">
+                                    </div>
                                 </div>
                             </div>
                             <span class="text-body-sm font-body-sm text-on-surface-variant">Normal atmospheric
@@ -232,10 +242,12 @@
                                         id="metric-vis-unit">km</span>
                                 </div>
                                 <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div class="bg-primary h-full rounded-full" style="width: 80%;"></div>
+                                    <div class="bg-primary h-full rounded-full" style="width: 80%;" id="bar-visibility">
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-body-sm font-body-sm text-on-surface-variant">Clear horizontal view</span>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant">Clear horizontal
+                                view</span>
                         </div>
                         <!-- 6. UV Index -->
                         <div
@@ -252,7 +264,9 @@
                                     <span class="font-body-lg text-body-lg text-on-surface-variant">of 11</span>
                                 </div>
                                 <div class="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div class="bg-tertiary-container h-full rounded-full" style="width: 55%;"></div>
+                                    <div class="bg-tertiary-container h-full rounded-full" style="width: 55%;"
+                                        id="bar-uv">
+                                    </div>
                                 </div>
                             </div>
                             <span class="text-body-sm font-body-sm text-on-surface-variant">Moderate (Sunscreen
@@ -260,7 +274,7 @@
                         </div>
                     </div>
                     <!-- 5-Day Extended Forecast Deck -->
-                    <div
+                    <!-- <div
                         class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 shadow-sm flex flex-col gap-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
@@ -273,7 +287,7 @@
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-1"
                             id="forecast-deck-container">
-                            <!-- Day 1 (Wed) -->
+
                             <div
                                 class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
                                 <div>
@@ -288,7 +302,7 @@
                                     <span class="text-on-surface-variant" data-forecast-low="23">23°</span>
                                 </div>
                             </div>
-                            <!-- Day 2 (Thu) -->
+
                             <div
                                 class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
                                 <div>
@@ -304,7 +318,6 @@
                                     <span class="text-on-surface-variant" data-forecast-low="22">22°</span>
                                 </div>
                             </div>
-                            <!-- Day 3 (Fri) -->
                             <div
                                 class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
                                 <div>
@@ -320,7 +333,6 @@
                                     <span class="text-on-surface-variant" data-forecast-low="23">23°</span>
                                 </div>
                             </div>
-                            <!-- Day 4 (Sat) -->
                             <div
                                 class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3">
                                 <div>
@@ -336,7 +348,6 @@
                                     <span class="text-on-surface-variant" data-forecast-low="24">24°</span>
                                 </div>
                             </div>
-                            <!-- Day 5 (Sun) -->
                             <div
                                 class="p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors flex flex-col items-center text-center justify-between gap-3 col-span-2 sm:col-span-1">
                                 <div>
@@ -347,19 +358,19 @@
                                 </div>
                                 <span
                                     class="material-symbols-outlined text-primary text-[32px]">partly_cloudy_day</span>
-                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Partly Cloudy</span>
+                                <span class="font-body-sm text-body-sm font-medium text-on-surface">Partly
+                                    Cloudy</span>
                                 <div class="flex items-center gap-1.5 text-body-sm">
                                     <span class="font-bold text-on-surface" data-forecast-high="33">33°</span>
                                     <span class="text-on-surface-variant" data-forecast-low="25">25°</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- ========================================================================= -->
-                <!-- STATE 2: INITIAL / EMPTY SCREEN                                           -->
-                <!-- ========================================================================= -->
-                <div class="hidden flex-col items-center justify-center py-16 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+                    </div> -->
+                </template>
+
+                <!-- STATE 2: INITIAL / EMPTY SCREEN -->
+                <div class="state hidden flex-col items-center justify-center py-16 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
                     id="state-initial">
                     <div
                         class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
@@ -381,10 +392,9 @@
                             My Location</button>
                     </div>
                 </div>
-                <!-- ========================================================================= -->
-                <!-- STATE 3: LOADING SKELETON STATE                                           -->
-                <!-- ========================================================================= -->
-                <div class="hidden flex-col gap-6 w-full animate-pulse" id="state-loading">
+                <!-- STATE 3: LOADING SKELETON STATE -->
+
+                <div class="state hidden flex-col gap-6 w-full animate-pulse" id="state-loading">
                     <!-- Hero Skeleton -->
                     <div
                         class="w-full bg-surface-container-lowest border border-surface-container rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row justify-between gap-6">
@@ -456,10 +466,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- ========================================================================= -->
-                <!-- STATE 4: CITY NOT FOUND (404)                                             -->
-                <!-- ========================================================================= -->
-                <div class="hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+
+                <!-- STATE 4: CITY NOT FOUND (404) -->
+
+                <div class="state hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
                     id="state-404">
                     <div
                         class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
@@ -480,10 +490,10 @@
                             Search</button>
                     </div>
                 </div>
-                <!-- ========================================================================= -->
-                <!-- STATE 5: NETWORK / API OFFLINE ERROR                                      -->
-                <!-- ========================================================================= -->
-                <div class="hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+
+                <!-- STATE 5: NETWORK / API OFFLINE ERROR -->
+
+                <div class="state hidden flex-col items-center justify-center py-14 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
                     id="state-offline">
                     <div
                         class="w-16 h-16 rounded-2xl bg-error-container text-on-error-container flex items-center justify-center mb-4 shadow-sm">
@@ -499,10 +509,10 @@
                         <span>Retry Connection</span>
                     </button>
                 </div>
-                <!-- ========================================================================= -->
-                <!-- STATE 6: EMPTY SEARCH VALIDATION ERROR                                    -->
-                <!-- ========================================================================= -->
-                <div class="hidden flex-col items-center justify-center py-12 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
+
+                <!-- STATE 6: EMPTY SEARCH VALIDATION ERROR -->
+
+                <div class="state hidden flex-col items-center justify-center py-12 px-4 bg-surface-container-lowest border border-surface-container rounded-2xl shadow-sm text-center"
                     id="state-validation">
                     <div
                         class="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-3">
@@ -534,7 +544,6 @@
             </div>
         </div>
     </footer>
-    <!-- Vanilla JavaScript Logic -->
     <script src="./script.js"></script>
 </body>
 
