@@ -10,8 +10,8 @@ const NetworkState = document.getElementById("state-offline");
 const validationState = document.getElementById("state-validation");
 const states = document.querySelectorAll(".state");
 
-let cityName=""
-let countryName=""
+let cityName = "";
+let countryName = "";
 
 temps.forEach((temp) => {
   temp.addEventListener("click", (e) => {
@@ -25,27 +25,24 @@ temps.forEach((temp) => {
 const showState = (state) => {
   states.forEach((el) => {
     el.classList.replace("flex", "hidden");
-    console.log(el);
   });
   state.classList.replace("hidden", "flex");
 };
 
 const getCoordinate = () => {
+  showState(loadingState);
   let city = searchInput.value.trim().toLowerCase();
   if (!city) {
-    return Swal.fire({
+    Swal.fire({
       title: "please add any city name",
       icon: "error",
       draggable: true,
     });
-  } else if (city.includes(" ")) {
-    return Swal.fire({
-      title: "space do not allow between city name",
-      icon: "error",
-      draggable: true,
-    });
+    return showState(validationState);
   } else {
-    fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`)
+    fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`,
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error();
@@ -53,16 +50,15 @@ const getCoordinate = () => {
         return res.json();
       })
       .then(({ results }) => {
-        if (!results) {
-          return console.log("validation Error");
+        if (!results || results.length === 0) {
+          document.getElementById("not-found-query").textContent = city;
+          return showState(NotFoundState);
         }
-        countryName = results[0].country
-        cityName = results[0].name
-        console.log(results[0]);
+        countryName = results[0].country || "";
+        cityName = results[0].name;
         getWeatherData(results);
       })
-      .catch(() => console.log("Network error"));
-    // .finally(() => console.log("Finally off loading........."));
+      .catch(() => showState(NetworkState));
 
     searchInput.value = "";
   }
@@ -79,14 +75,15 @@ const getWeatherData = (results) => {
       }
       return res.json();
     })
-    .then((data) => showWeather(data));
+    .then((data) => showWeather(data))
+    .catch(() => showState(NetworkState));
 };
 
 const showWeather = (weather) => {
-  console.log(weather);
-  const max = weather?.daily.temperature_2m_max[0];
-  const min = weather?.daily.temperature_2m_min[0];
-  const uv = weather?.daily.uv_index_max[0];
+  successState.innerHTML = "";
+  const max = weather?.daily?.temperature_2m_max[0];
+  const min = weather?.daily?.temperature_2m_min[0];
+  const uv = weather?.daily?.uv_index_max[0];
   const {
     temperature_2m,
     weather_code,
@@ -100,40 +97,26 @@ const showWeather = (weather) => {
     visibility,
   } = weather.current || weather.daily || {};
 
-  let windDirection = "";
-  if (wind_direction_10m >= 348.75 || wind_direction_10m < 11.25) {
-    windDirection = "N";
-  } else if (wind_direction_10m >= 11.25 && wind_direction_10m < 33.75) {
-    windDirection = "NNE";
-  } else if (wind_direction_10m >= 33.75 && wind_direction_10m < 56.25) {
-    windDirection = "NE";
-  } else if (wind_direction_10m >= 56.25 && wind_direction_10m < 78.75) {
-    windDirection = "ENE";
-  } else if (wind_direction_10m >= 78.75 && wind_direction_10m < 101.25) {
-    windDirection = "E";
-  } else if (wind_direction_10m >= 101.25 && wind_direction_10m < 123.75) {
-    windDirection = "ESE";
-  } else if (wind_direction_10m >= 123.75 && wind_direction_10m < 146.25) {
-    windDirection = "SE";
-  } else if (wind_direction_10m >= 146.25 && wind_direction_10m < 168.75) {
-    windDirection = "SSE";
-  } else if (wind_direction_10m >= 168.75 && wind_direction_10m < 191.25) {
-    windDirection = "S";
-  } else if (wind_direction_10m >= 191.25 && wind_direction_10m < 213.75) {
-    windDirection = "SSW";
-  } else if (wind_direction_10m >= 213.75 && wind_direction_10m < 236.25) {
-    windDirection = "SW";
-  } else if (wind_direction_10m >= 236.25 && wind_direction_10m < 258.75) {
-    windDirection = "WSW";
-  } else if (wind_direction_10m >= 258.75 && wind_direction_10m < 281.25) {
-    windDirection = "W";
-  } else if (wind_direction_10m >= 281.25 && wind_direction_10m < 303.75) {
-    windDirection = "WNW";
-  } else if (wind_direction_10m >= 303.75 && wind_direction_10m < 326.25) {
-    windDirection = "NW";
-  } else if (wind_direction_10m >= 326.25 && wind_direction_10m < 348.75) {
-    windDirection = "NNW";
-  }
+  const directions = [
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW",
+  ];
+  const index = Math.round(wind_direction_10m / 22.5) % 16;
+  const windDirection = directions[index];
   let weatherIcon = "";
   let weatherCondition = "";
   if (weather_code === 0) {
@@ -185,6 +168,15 @@ const showWeather = (weather) => {
     weatherIcon = "device_thermostat";
   }
 
+  const now = new Date();
+  const formattedTime = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
   const tmpl = document.querySelector("template");
   const clone = tmpl.content.cloneNode(true);
   clone.querySelector("#feels-like-val").textContent =
@@ -192,6 +184,7 @@ const showWeather = (weather) => {
   clone.querySelector("#hero-weather-icon").textContent = weatherIcon;
   clone.querySelector("#hero-city-name").textContent = cityName;
   clone.querySelector("#hero-country-name").textContent = countryName;
+  clone.querySelector("#hero-local-time").textContent = formattedTime;
   clone.querySelector("#range-val").textContent = `H: ${max}°C • L: ${min}°C`;
   clone.querySelector("#hero-temp-display").textContent = temperature_2m;
   clone.querySelector("#hero-condition-text").textContent = weatherCondition;
@@ -202,7 +195,8 @@ const showWeather = (weather) => {
     `Direction: ${windDirection}(${wind_direction_10m}°)`;
   clone.querySelector("#metric-wind").textContent = wind_speed_10m;
   clone.querySelector("#metric-rain").textContent = precipitation;
-  clone.querySelector("#Precipitation-expected").textContent = `${precipitation} mm expected`;
+  clone.querySelector("#Precipitation-expected").textContent =
+    `${precipitation} mm expected`;
   clone.querySelector("#metric-pressure").textContent = surface_pressure;
   clone.querySelector("#metric-visibility").textContent = visibility / 1000;
   clone.querySelector("#metric-uv").textContent = Math.floor(uv);
@@ -217,6 +211,7 @@ const showWeather = (weather) => {
   clone.querySelector("#bar-uv").style.width =
     `${Math.floor((uv / 11) * 100)}% `;
   successState.appendChild(clone);
+  showState(successState);
 };
 
 searchBtn.addEventListener("click", getCoordinate);
@@ -231,4 +226,4 @@ searchInput.addEventListener("keydown", (e) => {
   }
 });
 
-// showState(initialState);
+showState(initialState);
