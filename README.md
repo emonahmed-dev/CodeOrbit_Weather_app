@@ -4,11 +4,11 @@ A clean and responsive weather dashboard built with HTML, Tailwind CSS, and Vani
 
 ## Live Demo
 
-Add your Netlify/Vercel live demo URL here.
+https://code-orbit-weather-app-psi.vercel.app/
 
-## Preview
+## 📸Preview
 
-![Weatherly Preview](./assets/weather-preview.png)
+![Weatherly Preview](https://i.ibb.co.com/pjMpVsJL/Screenshot-2026-09-29-113709.png)
 
 ## Features
 
@@ -103,13 +103,13 @@ Weatherly/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/emonahmed-dev/CodeOrbit_Weather_app.git
 ```
 
 ### 2. Open the project
 
 ```bash
-cd Weatherly
+cd CodeOrbit_Weather_app
 ```
 
 ### 3. Install dependencies
